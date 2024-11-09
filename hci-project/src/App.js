@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
 import NameInput from './pages/NameInput';
-import BrainwaveReading from './pages/BrainwaveReading';
+import MuseConnectionPrompt from './pages/MuseConnectionPrompt'; // 파일 이름과 컴포넌트 이름 수정
 
 function App() {
   const [name, setName] = useState('');
-  const [showBrainwaveReading, setShowBrainwaveReading] = useState(false);
+  const [showMuseConnectionPrompt, setShowMuseConnectionPrompt] = useState(false);
 
   const handleNameSubmit = (enteredName) => {
     setName(enteredName);
-    setShowBrainwaveReading(true); // BrainwaveReading 화면으로 전환
+    setShowMuseConnectionPrompt(true); // MuseConnectionPrompt 화면으로 전환
   };
 
   return (
     <div className="App">
-      {!showBrainwaveReading ? (
+      {!showMuseConnectionPrompt ? (
         <NameInput onNameSubmit={handleNameSubmit} />
       ) : (
-        <BrainwaveReading name={name} />
+        <MuseConnectionPrompt name={name} />
       )}
     </div>
   );
