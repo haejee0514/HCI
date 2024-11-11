@@ -1,0 +1,62 @@
+.image-modification-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+  }
+  
+  .modification-prompt {
+    font-size: 3rem;
+    margin-bottom: 60px;
+    letter-spacing: 3px;
+    color: #000;
+  }
+  
+  .input-container {
+    display: flex;
+    align-items: center;
+    width: 60%;
+    max-width: 500px;
+    background-color: #e0e0e0;
+    border-radius: 25px;
+    padding: 10px;
+  }
+  
+  .text-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 10px;
+    padding-right: 80px; /* 오른쪽 버튼 공간 확보 */
+    background-color: transparent;
+    font-size: 1rem;
+    letter-spacing: 1px;
+  }
+  
+  .send-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    margin-right: 10px; /* 마이크 버튼과 간격 조정 */
+  }
+  
+  .send-icon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .mic-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+  }
+  
+  .mic-icon {
+    width: 24px;
+    height: 24px;
+  }
+  

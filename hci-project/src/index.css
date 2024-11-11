@@ -88,3 +88,28 @@ body {
 .instruction-text {
   font-family: 'FreesentationSemiBold', sans-serif;
 }
+
+.loading-text {
+  font-family: 'FreesentationBold', sans-serif;
+}
+
+.kakao-share-button {
+  font-family: 'FreesentationSemiBold', sans-serif;
+}
+
+.image-modification-text {
+  font-family: 'FreesentationSemiBold', sans-serif;
+}
+
+.image-description {
+  font-family: 'FreesentationRegular', sans-serif;
+}
+
+.modification-prompt {
+  font-family: 'FreesentationSemiBold', sans-serif;
+}
+
+.text-input {
+  font-family: 'FreesentationRegular', sans-serif;
+}
+

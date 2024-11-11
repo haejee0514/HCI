@@ -1,0 +1,50 @@
+.generated-image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+  }
+  
+  .generated-image {
+    width: 350px; /* 원하는 이미지 크기로 조정 */
+    height: auto;
+    margin-bottom: 20px;
+    background-color: #e0e0e0; /* 이미지가 로드되지 않을 때의 배경색 */
+  }
+  
+  .image-description {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 20px; /* 이미지 설명과 수정 텍스트 간격 */
+    max-width: 400px; /* 글자 줄 바꿈을 위해 최대 너비 설정 */
+    text-align: center;
+  }
+  
+  .image-modification-text {
+    font-size: 1.2rem;
+    color: #333;
+    text-decoration: underline;
+    margin-bottom: 30px;
+  }
+  
+  .kakao-share-button {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    color: #3C1E1E; /* KakaoTalk 브라운 색상 */
+    background-color: #FEE500; /* KakaoTalk 노란색 */
+    border: none;
+    border-radius: 999px; /* 양쪽 끝을 둥글게 */
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .kakao-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px; /* 아이콘과 텍스트 간격 */
+  }
+  

@@ -1,9 +1,15 @@
 import React from 'react';
-import '../styles/ImageRegeneration.css';
+import '../styles/AIImageGeneration.css';
 
-const ImageRegeneration = () => {
+const AIImageGeneration = () => {
   return (
     <div className="ai-image-generation-container">
+      <header className="header">
+        <button className="home-button">
+          <img src="/img/home.png" alt="Home" className="home-icon" />
+        </button>
+      </header>
+      
       <div className="vital-wave-loader">
         <div className="wave-bar"></div>
         <div className="wave-bar"></div>
@@ -12,7 +18,7 @@ const ImageRegeneration = () => {
         <div className="wave-bar"></div>
       </div>
       <p className="loading-text">
-        수정사항을 반영한 이미지 생성 중..
+        뇌파에 따른 AI 이미지 생성 중..
         <br />
         잠시만 기다려주세요
       </p>
@@ -20,4 +26,4 @@ const ImageRegeneration = () => {
   );
 };
 
-export default ImageRegeneration;
+export default AIImageGeneration;

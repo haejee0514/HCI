@@ -1,4 +1,4 @@
-.brainwave-reading-container {
+.ai-image-generation-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -57,5 +57,5 @@
     background: linear-gradient(45deg, #06396f, #97cdfc); /* 그라데이션 추가 */
     -webkit-background-clip: text;
     background-clip: text;
+    line-height: 1.8;
   }
-  
