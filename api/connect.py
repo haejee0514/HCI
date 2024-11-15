@@ -1,11 +1,28 @@
 # Muse 2 연결 확인 API
-# python version: 3.12.2
-# flask 사용해서 서버구축
-# 연결 여부(t/f) API 엔드 포인트 /api/connect로 보내기
-# 예시코드 및 설명: (https://www.notion.so/1311f59b95658063be79f7bade3e989d?v=ab05c397f4c0453f961ea6a7c973721b&p=cfbce78a2d0d437d899ff3ce5dcf8fd2&pm=s)
-# 잘 반환되는지 postman에서 확인할 수 있음
 
-# 깃허브를 잘 몰라서 어케되는지는 모르겠지만.. 다른 백엔드 파일이랑 같은 폴더 내에 있어서 잘못 커밋하면 슬퍼질 수 있을 것 같숩니당
-# 이 파일만 변경되는지 잘 체크해주기 아니면 브랜치를 새로 만들어야하나..?
-# 규민이 짱 규민이 최고 규민이 멋쟁이
-# 아좌좌 파이팅이다!!
+from flask import Flask, jsonify
+from pylsl import StreamInlet, resolve_stream
+
+app = Flask(__name__)
+
+def check_muse_connection():
+    try:
+        # LSL로 Muse 스트림 검색
+        streams = resolve_stream('type', 'EEG')
+        if streams:
+            return True
+        else: 
+            return False
+        
+    except Exception as e:
+        print(f"Error connecting to Muse: {e}")
+        return False
+
+#API 엔드포인트 정의 
+@app.route('/api/connect', methods=['GET'])
+def connect_muse():
+    connected = check_muse_connection()
+    return jsonify({"connected": connected})
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
