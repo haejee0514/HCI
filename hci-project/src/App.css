@@ -1,7 +1,12 @@
 .App {
   text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
+/* 로고 애니메이션 */
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -13,21 +18,23 @@
   }
 }
 
+/* 헤더 스타일 */
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  width: 100%; /* 헤더가 가로 전체를 차지하도록 설정 */
+  height: 80px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
   color: white;
 }
 
+/* 링크 스타일 */
 .App-link {
   color: #61dafb;
 }
 
+/* 로고 회전 애니메이션 */
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -36,3 +43,4 @@
     transform: rotate(360deg);
   }
 }
+

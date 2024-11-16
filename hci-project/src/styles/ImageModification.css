@@ -8,7 +8,7 @@
   }
   
   .modification-prompt {
-    font-size: 3rem;
+    font-size: 3.3rem;
     margin-bottom: 60px;
     letter-spacing: 3px;
     color: #000;
@@ -17,7 +17,7 @@
   .input-container {
     display: flex;
     align-items: center;
-    width: 60%;
+    width: 100%;
     max-width: 500px;
     background-color: #e0e0e0;
     border-radius: 25px;
@@ -28,7 +28,7 @@
     flex: 1;
     border: none;
     outline: none;
-    padding: 10px;
+    padding: 13px;
     padding-right: 80px; /* 오른쪽 버튼 공간 확보 */
     background-color: transparent;
     font-size: 1rem;

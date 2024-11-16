@@ -1,0 +1,17 @@
+.header {
+    width: 100%; /* 가로로 100% 차지 */
+    height: 80px;
+    background-color: #ffffff; /* 흰색 배경 */
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+    position: fixed; /* 페이지 스크롤 시에도 고정 */
+    top: 0; /* 화면 위쪽에 붙이기 */
+    left: 0;
+    z-index: 1000; /* 다른 요소 위에 고정되도록 */
+}
+
+.logo {
+    height: 40px; /* 로고 크기 */
+}

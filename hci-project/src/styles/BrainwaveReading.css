@@ -1,61 +1,66 @@
 .brainwave-reading-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+}
+
+.vital-wave-loader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 120px;
+  height: 40px;
+  margin-bottom: 20px;
+}
+
+.wave-bar {
+  width: 6px;
+  height: 100%;
+  background-color: #14579a;
+  border-radius: 3px;
+  animation: wave-animation 1s ease-in-out infinite;
+}
+
+.wave-bar:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.wave-bar:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.wave-bar:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+.wave-bar:nth-child(5) {
+  animation-delay: 0.4s;
+}
+
+@keyframes wave-animation {
+  0%, 100% {
+    transform: scaleY(0.3);
   }
-  
-  .vital-wave-loader {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    width: 120px;
-    height: 40px;
-    margin-bottom: 20px;
+  50% {
+    transform: scaleY(1);
   }
-  
-  .wave-bar {
-    width: 6px;
-    height: 100%;
-    background-color: #14579a;
-    border-radius: 3px;
-    animation: wave-animation 1s ease-in-out infinite;
-  }
-  
-  .wave-bar:nth-child(2) {
-    animation-delay: 0.1s;
-  }
-  
-  .wave-bar:nth-child(3) {
-    animation-delay: 0.2s;
-  }
-  
-  .wave-bar:nth-child(4) {
-    animation-delay: 0.3s;
-  }
-  
-  .wave-bar:nth-child(5) {
-    animation-delay: 0.4s;
-  }
-  
-  @keyframes wave-animation {
-    0%, 100% {
-      transform: scaleY(0.3);
-    }
-    50% {
-      transform: scaleY(1);
-    }
-  }
-  
-  .loading-text {
-    font-size: 2.5rem;
-    margin-bottom: 60px;
-    letter-spacing: 3px;
-    color: transparent;
-    background: linear-gradient(45deg, #06396f, #97cdfc); /* 그라데이션 추가 */
-    -webkit-background-clip: text;
-    background-clip: text;
-  }
-  
+}
+
+.loading-text {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  letter-spacing: 3px;
+  color: transparent;
+  background: linear-gradient(45deg, #06396f, #97cdfc);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* 새로운 작은 텍스트 스타일 */
+.sub-text {
+  font-size: 1.6rem;
+  color: #9ea3a8;
+}
