@@ -1,4 +1,4 @@
 config.py
 venv/
 *.dll
-*.lib
+*.libconfig.py

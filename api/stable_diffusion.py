@@ -45,3 +45,4 @@ def request_image_generation(prompt):
     
     else:
         return {"status": "error", "error": f"Error: {response.status_code}, {response.text}"}
+# Stable Diffusion 호출 API
