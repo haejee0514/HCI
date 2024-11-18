@@ -2,8 +2,13 @@
 import json
 import openai
 import os
+import sys
 
-openai.api_key = "API_KEY"
+# 현재 파일의 디렉토리를 기준으로 상위 디렉토리를 추가
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from config import OPENAI_KEY
+openai.api_key = OPENAI_KEY
 
 def read_eeg_json(file_path):
     with open(file_path, 'r') as file:
@@ -50,8 +55,9 @@ def call_openai_api(prompt):
     except Exception as e:
         print(f"Error calling OpenAI API: {e}")
         return None
-    
-# JSON 결과 저장
+
+
+    # JSON 결과 저장
 def save_result_to_json(file_path, results):
     with open(file_path, 'w') as file:
         json.dump(results, file, indent=4)  # JSON 파일에 저장
@@ -93,6 +99,7 @@ def main():
 
     # 결과를 JSON 파일에 저장
     save_result_to_json(output_file, results)
+
 
 if __name__ == "__main__":
     main()
