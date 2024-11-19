@@ -10,7 +10,7 @@ AI_Input = {
 }
 
 # JSON 데이터를 백엔드로 전송
-def send_to_backend(data, url="http://your-backend-url/api"):
+def send_to_backend(data, url="http://localhost:5000/api/brainwaves"):
     headers = {'Content-Type': 'application/json'}
     try:
         response = requests.post(url, json=data, headers=headers)
