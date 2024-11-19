@@ -2,3 +2,5 @@ config.py
 venv/
 *.dll
 *.libconfig.py
+config.py
+__pycache__/
