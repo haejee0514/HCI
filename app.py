@@ -1,41 +1,20 @@
-from flask import Flask, request, jsonify
+from flask import Flask
+from api.images import images_bp
+from api.brainwaves import brainwaves_bp
+from api.connect import connect_bp
 
-from stable_diffusion import request_image_generation
+from flask import Flask
+from flask_cors import CORS
+
 app = Flask(__name__)
+CORS(app)  # 모든 도메인에서 오는 요청 허용
+
+# 블루프린트 등록
+app.register_blueprint(connect_bp)
+app.register_blueprint(brainwaves_bp)
+app.register_blueprint(images_bp)
+
 
 
 if __name__ == '__main__':
     app.run(debug=True)
-from flask import Flask, request, jsonify, send_file
-from tempfile import NamedTemporaryFile
-
-app = Flask(__name__)
-'''
-# Stable Diffusion 모델 로드
-pipe = load_stable_diffusion()
-
-@app.route('/api/brainwaves/upload', methods=['POST'])
-def upload_brainwave_data():
-    brainwave_data = request.json
-    save_brainwave_data(brainwave_data)
-    return jsonify({"message": "Brainwave data uploaded successfully"}), 201
-
-@app.route('/api/stableDiffusion', methods=['POST'])
-def stable_diffusion():
-    brainwave_data = load_brainwave_data()
-    if brainwave_data is None:
-        return jsonify({"error": "No brainwave data found"}), 404
-
-    prompt = f"An abstract representation of brainwave patterns: {brainwave_data}"
-    image = generate_image(pipe, prompt)
-
-    with NamedTemporaryFile(delete=False, suffix=".png") as tmp_file:
-        image.save(tmp_file.name)
-        image_path = tmp_file.name
-
-    return send_file(image_path, mimetype='image/png')
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-'''

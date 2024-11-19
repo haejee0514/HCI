@@ -1,12 +1,16 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Blueprint
 from stable_diffusion import request_image_generation, API_KEY , seed, request_image_modifying
 API_KEY= API_KEY
-app = Flask(__name__)
+
+
+images_bp = Blueprint('images',__name__)
 import requests
 import base64
 
+
+
 # 기존 이미지 생성 엔드포인트
-@app.route('/api/images/generate', methods=['POST'])
+@images_bp.route('/api/images/generate', methods=['POST'])
 
 def generate_image():
     prompt = request.json.get("prompt")
@@ -19,7 +23,7 @@ def generate_image():
 
 
 # 이미지 수정(Inpainting) 엔드포인트
-@app.route('/api/images/modified', methods=['POST'])
+@images_bp.route('/api/images/modified', methods=['POST'])
 def modify_image():
     data = request.json
     additional_prompt = data.get("inputs")
@@ -31,6 +35,3 @@ def modify_image():
     # Inpainting 처리 결과를 그대로 반환
     return jsonify(response)
 
-
-if __name__ == '__main__':
-    app.run(debug=True)

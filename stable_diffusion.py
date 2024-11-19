@@ -48,7 +48,11 @@ def request_image_generation(prompt):
         return {"status": "error", "error": f"Error: {response.status_code}, {response.text}"}
 
 
+import base64
+import requests
+
 def request_image_modifying(init_image, prompt, seed, init_strength=0.1, steps=20, cfg_scale=1.0):
+    # init_image는 이미 Base64로 인코딩된 이미지 데이터입니다.
     headers = {
         "Authorization": f"Bearer {API_KEY}",
         "Content-Type": "application/json"
@@ -56,7 +60,7 @@ def request_image_modifying(init_image, prompt, seed, init_strength=0.1, steps=2
     
     payload = {
         "prompt": prompt,  # 텍스트 프롬프트
-        "init_image": init_image,  # base64로 인코딩된 기존 이미지
+        "init_image": init_image,  # 이미 Base64로 인코딩된 기존 이미지
         "seed": seed,  # 랜덤 시드
         "strength": init_strength,  # 기존 이미지 수정 강도 (0~1)
         "num_inference_steps": steps,  # 생성 단계 수
@@ -67,14 +71,27 @@ def request_image_modifying(init_image, prompt, seed, init_strength=0.1, steps=2
     response = requests.post(STABLE_DIFFUSION_API_URL, headers=headers, json=payload)
     
     if response.status_code == 200:
-        # API 응답이 이미지인지 확인
-        if 'image/' in response.headers.get('Content-Type', ''):
+        # API 응답이 Base64 데이터인지 확인
+        content_type = response.headers.get('Content-Type', '')
+        if content_type == 'application/json':
             try:
-                image_data = base64.b64encode(response.content).decode('utf-8')  # 수정된 이미지를 base64로 변환
+                # JSON 응답에서 Base64 데이터를 추출
+                response_json = response.json()
+                if 'image' in response_json:
+                    image_data = response_json['image']  # Base64 데이터 그대로 사용
+                    return {"status": "success", "modified_image": image_data, "seed": seed}
+                else:
+                    return {"status": "error", "error": "No image data found in JSON response"}
+            except Exception as e:
+                return {"status": "error", "error": f"JSON parsing failed: {e}"}
+        elif content_type.startswith('image/'):
+            try:
+                # 바이너리 이미지를 Base64로 변환
+                image_data = base64.b64encode(response.content).decode('utf-8')
                 return {"status": "success", "modified_image": image_data, "seed": seed}
             except Exception as e:
                 return {"status": "error", "error": f"Base64 encoding failed: {e}"}
         else:
-            return {"status": "error", "error": f"Unexpected content type: {response.headers.get('Content-Type', '')}"}
+            return {"status": "error", "error": f"Unexpected content type: {content_type}"}
     else:
         return {"status": "error", "error": f"Error: {response.status_code}, {response.text}"}

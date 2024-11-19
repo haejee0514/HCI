@@ -1,7 +1,7 @@
 import openai
 import os
 import sys
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Blueprint
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # OpenAI API 키 설정
@@ -9,7 +9,7 @@ from config import OPENAI_KEY
 openai.api_key = OPENAI_KEY
 
 # Flask 애플리케이션 초기화
-app = Flask(__name__)
+brainwaves_bp = Blueprint('brainwaves',__name__)
 
 # 첫 번째 API 호출: Explanation 생성
 def generate_explanation(prompt):
@@ -93,7 +93,7 @@ def process_brainwave_data(input_data):
 
 
 # Flask API 엔드포인트
-@app.route('/api/brainwaves/describe', methods=['POST'])
+@brainwaves_bp.route('/api/brainwaves/describe', methods=['POST'])
 def process_brainwaves():
     try:
         # JSON 요청에서 뇌파 데이터 가져오기
@@ -117,6 +117,3 @@ def process_brainwaves():
     except Exception as e:
         print(f"Exception in processing brainwaves: {e}")  # 디버깅용 로그
         return jsonify({"status": "error", "message": str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(debug=True)
