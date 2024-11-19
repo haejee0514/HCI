@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Header from './Header'; // Header 컴포넌트 import
 import '../styles/ImageRegeneration.css';
 
 const ImageRegeneration = () => {
@@ -22,19 +23,22 @@ const ImageRegeneration = () => {
   }, [modifiedImage, seed, navigate]);
 
   return (
-    <div className="ai-image-generation-container">
-      <div className="vital-wave-loader">
-        <div className="wave-bar"></div>
-        <div className="wave-bar"></div>
-        <div className="wave-bar"></div>
-        <div className="wave-bar"></div>
-        <div className="wave-bar"></div>
+    <div>
+      <Header /> {/* Header 추가 */}
+      <div className="ai-image-generation-container">
+        <div className="vital-wave-loader">
+          <div className="wave-bar"></div>
+          <div className="wave-bar"></div>
+          <div className="wave-bar"></div>
+          <div className="wave-bar"></div>
+          <div className="wave-bar"></div>
+        </div>
+        <p className="loading-text">
+          수정사항을 반영한 이미지 생성 중..
+          <br />
+          잠시만 기다려주세요
+        </p>
       </div>
-      <p className="loading-text">
-        수정사항을 반영한 이미지 생성 중..
-        <br />
-        잠시만 기다려주세요
-      </p>
     </div>
   );
 };

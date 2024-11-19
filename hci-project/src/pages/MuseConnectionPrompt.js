@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'; // useLocation과 useNavigate import
+import Header from './Header'; // Header 컴포넌트 import
 import '../styles/MuseConnectionPrompt.css'; // CSS 파일
 
 const MuseConnectionPrompt = () => {
@@ -40,18 +41,20 @@ const MuseConnectionPrompt = () => {
   }, [navigate, name]);
 
   return (
-    <div className="brainwave-reading-container">
-      <img src="/img/muse2.jpg" alt="Muse 2" className="muse-image" />
-      <p className="instruction-text">
-        {name}님, Muse 2를 착용하세요.
-      </p>
-      {!isConnected && <div className="loading-spinner"></div>} {/* 연결 전 로딩 애니메이션 */}
-      {isConnected && (
-        <p className="success-message">MUSE 2 연결이 완료되었습니다!</p>
-      )}
+    <div>
+      <Header /> {/* Header 추가 */}
+      <div className="brainwave-reading-container">
+        <img src="/img/muse2.jpg" alt="Muse 2" className="muse-image" />
+        <p className="instruction-text">
+          {name}님, Muse 2를 착용하세요.
+        </p>
+        {!isConnected && <div className="loading-spinner"></div>} {/* 연결 전 로딩 애니메이션 */}
+        {isConnected && (
+          <p className="success-message">MUSE 2 연결이 완료되었습니다!</p>
+        )}
+      </div>
     </div>
   );
 };
 
 export default MuseConnectionPrompt;
-
