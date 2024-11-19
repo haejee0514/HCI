@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // useNavigate import
 import Header from './Header'; // Header 컴포넌트 임포트
 import '../styles/ImageModification.css';
 
 const ImageModification = () => {
   const [text, setText] = useState('');
   const [isListening, setIsListening] = useState(false);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [estimatedTime, setEstimatedTime] = useState(null); // 예상 대기 시간
+  const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate
 
   // Web Speech API 설정
   const SpeechRecognition =
@@ -36,6 +41,54 @@ const ImageModification = () => {
     setIsListening(false);
   };
 
+  // 수정 사항 전송 함수
+  const handleSendClick = async () => {
+    if (!text.trim()) {
+      alert('수정 사항을 입력해주세요.');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('http://localhost:5000/api/images/modified', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          inputs: text, // 수정 사항 전달
+        }),
+      });
+
+      if (response.status === 503) {
+        // 서버가 바쁜 경우 처리
+        const data = await response.json();
+        if (data.status === 'loading') {
+          setEstimatedTime(data.estimated_time);
+          throw new Error(`현재 서버가 바쁩니다. 예상 대기 시간: ${data.estimated_time}초`);
+        }
+      }
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}, ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      if (data.status === 'success') {
+        // 성공적으로 전송된 경우 ImageRegeneration로 이동
+        navigate('/ImageRegeneration', { state: { modifiedImage: data.modified_image, seed: data.seed } });
+      } else {
+        throw new Error(data.message || '수정 요청에 실패했습니다.');
+      }
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div>
       <Header /> {/* Header 컴포넌트를 상단에 추가 */}
@@ -49,7 +102,7 @@ const ImageModification = () => {
             value={text}
             onChange={(e) => setText(e.target.value)}
           />
-          <button className="send-button">
+          <button className="send-button" onClick={handleSendClick} disabled={isLoading}>
             <img src="/img/send.png" alt="Send Icon" className="send-icon" />
           </button>
           <button
@@ -59,6 +112,9 @@ const ImageModification = () => {
             <img src="/img/mic.png" alt="Mic Icon" className="mic-icon" />
           </button>
         </div>
+        {isLoading && <p>수정 요청을 처리 중입니다...</p>}
+        {estimatedTime && <p>현재 서버가 바쁩니다. 예상 대기 시간: {estimatedTime}초</p>}
+        {error && <p className="error-message">오류 발생: {error}</p>}
       </div>
     </div>
   );

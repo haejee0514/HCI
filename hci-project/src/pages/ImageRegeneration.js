@@ -1,7 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles/ImageRegeneration.css';
 
 const ImageRegeneration = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { modifiedImage, seed } = location.state || {};
+
+  useEffect(() => {
+    if (!modifiedImage) {
+      // 데이터가 없으면 이전 페이지로 이동
+      navigate('/ImageModification');
+    } else {
+      // 로딩 후 RegeneratedImage 페이지로 이동
+      const timer = setTimeout(() => {
+        navigate('/RegeneratedImage', { state: { modifiedImage, seed } });
+      }, 3000); // 3초 로딩 시간
+
+      return () => clearTimeout(timer); // 컴포넌트 언마운트 시 타이머 정리
+    }
+  }, [modifiedImage, seed, navigate]);
+
   return (
     <div className="ai-image-generation-container">
       <div className="vital-wave-loader">

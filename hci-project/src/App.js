@@ -3,17 +3,26 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import NameInput from './pages/NameInput';
 import MuseConnectionPrompt from './pages/MuseConnectionPrompt';
+import BrainwaveReading from './pages/BrainwaveReading';
+import AIImageGeneration from './pages/AIImageGeneration';
+import GeneratedImage from './pages/GeneratedImage';
+import ImageModification from './pages/ImageModification';
+import RegeneratedImage from './pages/RegeneratedImage';
+import ImageRegeneration from './pages/ImageRegeneration'; // ImageRegeneration 추가
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* 기본 경로 "/"에서 Home 컴포넌트를 렌더링 */}
         <Route path="/" element={<Home />} />
-        {/* NameInput 페이지 */}
         <Route path="/NameInput" element={<NameInput />} />
-        {/* MuseConnectionPrompt 페이지 */}
         <Route path="/MuseConnectionPrompt" element={<MuseConnectionPrompt />} />
+        <Route path="/BrainwaveReading" element={<BrainwaveReading />} />
+        <Route path="/AIImageGeneration" element={<AIImageGeneration />} />
+        <Route path="/GeneratedImage" element={<GeneratedImage />} />
+        <Route path="/ImageModification" element={<ImageModification />} />
+        <Route path="/RegeneratedImage" element={<RegeneratedImage />} />
+        <Route path="/ImageRegeneration" element={<ImageRegeneration />} /> {/* ImageRegeneration 경로 추가 */}
       </Routes>
     </Router>
   );
