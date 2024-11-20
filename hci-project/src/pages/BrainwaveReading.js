@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // 페이지 이동을 위한 useNavigate 훅
+import { useNavigate, useLocation } from 'react-router-dom'; // useLocation 추가
 import Header from './Header'; // Header 컴포넌트 임포트
 import '../styles/BrainwaveReading.css';
 
-const BrainwaveReading = ({ name }) => {
+const BrainwaveReading = () => {
+  const location = useLocation(); // 전달된 데이터를 가져오기 위한 useLocation
   const navigate = useNavigate(); // 페이지 이동 훅
-  const [errorMessage, setErrorMessage] = useState(''); // 에러 메시지 상태
+  const { name } = location.state || { name: '사용자' }; // 전달된 name 값 또는 기본값
   const [retryCount, setRetryCount] = useState(0); // 재시도 횟수 상태
 
   useEffect(() => {
     const checkAIStatus = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/ai-status'); // API 호출
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/ai-status`); // API 호출
         if (!response.ok) {
           if (response.status === 500) {
             throw new Error('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
@@ -32,8 +33,7 @@ const BrainwaveReading = ({ name }) => {
           throw new Error(data.message || '예상치 못한 상태 값이 반환되었습니다.');
         }
       } catch (error) {
-        console.error('Error checking AI status:', error);
-        setErrorMessage(error.message);
+        console.error('Error checking AI status:', error); // 콘솔에만 에러 출력
       }
     };
 
@@ -62,11 +62,7 @@ const BrainwaveReading = ({ name }) => {
           {name}님의 뇌파를 읽는 중입니다
         </p>
         <p className="sub-text">정확한 측정을 위해 움직임을 최소화해주세요.</p>
-        {errorMessage && (
-          <p className="error-message">
-            {errorMessage} (재시도 횟수: {retryCount})
-          </p>
-        )}
+        {/* 사용자에게 에러 메시지를 숨김 */}
       </div>
     </div>
   );

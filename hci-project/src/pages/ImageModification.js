@@ -52,7 +52,7 @@ const ImageModification = () => {
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:5000/api/images/modified', {
+      const response = await fetch('${process.env.REACT_APP_BACKEND_URL}/api/images/modified', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

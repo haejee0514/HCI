@@ -23,7 +23,7 @@ const GeneratedImage = () => {
     const fetchData = async () => {
       try {
         // 1. 설명 데이터 가져오기
-        const descriptionResponse = await fetch('http://localhost:5000/api/get-description');
+        const descriptionResponse = await fetch('${process.env.REACT_APP_BACKEND_URL}/api/get-description');
         if (!descriptionResponse.ok) {
           throw new Error(`Error ${descriptionResponse.status}: 설명 데이터를 가져올 수 없습니다.`);
         }
@@ -35,7 +35,7 @@ const GeneratedImage = () => {
         }
 
         // 2. 이미지 데이터 가져오기
-        const imageResponse = await fetch('http://localhost:5000/api/images/generate', {
+        const imageResponse = await fetch('${process.env.REACT_APP_BACKEND_URL}/api/images/generate', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

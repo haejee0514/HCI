@@ -7,20 +7,27 @@ const MuseConnectionPrompt = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { name } = location.state || { name: '사용자' }; // 전달된 이름 또는 기본값
-  const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
+    let isChecking = true; // 연결 상태를 확인 중인지 확인하는 변수
+
     const checkConnection = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/connect'); // Flask API 엔드포인트
+        console.log('Checking Muse connection...');
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/connect`); // Flask API 엔드포인트
+
+        console.log('Response status:', response.status);
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
         const data = await response.json();
-        if (data.connected) {
+        console.log('Response JSON:', data);
+
+        if (data.connected && isChecking) {
           alert('MUSE 2 연결 성공!');
-          setIsConnected(true);
+          isChecking = false; // 연결 확인 중단
 
           // BrainwaveReading 페이지로 이동
           setTimeout(() => {
@@ -37,7 +44,10 @@ const MuseConnectionPrompt = () => {
     const interval = setInterval(checkConnection, 2000);
 
     // 컴포넌트 언마운트 시 interval 정리
-    return () => clearInterval(interval);
+    return () => {
+      isChecking = false; // 더 이상 확인하지 않음
+      clearInterval(interval);
+    };
   }, [navigate, name]);
 
   return (
@@ -48,10 +58,7 @@ const MuseConnectionPrompt = () => {
         <p className="instruction-text">
           {name}님, Muse 2를 착용하세요.
         </p>
-        {!isConnected && <div className="loading-spinner"></div>} {/* 연결 전 로딩 애니메이션 */}
-        {isConnected && (
-          <p className="success-message">MUSE 2 연결이 완료되었습니다!</p>
-        )}
+        <div className="loading-spinner"></div> {/* 로딩 애니메이션 유지 */}
       </div>
     </div>
   );
