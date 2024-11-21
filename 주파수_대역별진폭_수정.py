@@ -73,7 +73,6 @@ while True:
     if time.time() - start_time >= time_interval:
         # 대역별 평균값 계산
         averaged_values = {band: np.mean(buffered_band_values[band]) for band in frequency_bands}
-        results.append({"AI_Input": averaged_values})
 
         # 결과 출력
         print(f"5초 동안의 평균 대역별 진폭 값: {averaged_values}")
