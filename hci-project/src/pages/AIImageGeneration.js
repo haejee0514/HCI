@@ -9,9 +9,12 @@ const AIImageGeneration = () => {
   useEffect(() => {
     const fetchGeneratedImage = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/images/generate`, {
-          method: 'GET', // GET 방식으로 변경
-        });
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/images/generate`, 
+          {
+            method: 'GET', // GET 방식으로 변경
+          }
+        );
 
         if (!response.ok) {
           if (response.status === 503) {
@@ -26,9 +29,8 @@ const AIImageGeneration = () => {
 
         if (data.status === 'success') {
           const generatedImage = `data:image/png;base64,${data.generated_image}`; // Base64 이미지
-          const seed = data.seed; // Seed 값
           navigate('/GeneratedImage', {
-            state: { generatedImage, seed }, // 응답 데이터 전달
+            state: { generatedImage }, // seed 제거 후, generatedImage만 전달
           });
         } else {
           throw new Error(data.error || '이미지 생성에 실패했습니다.');
