@@ -6,8 +6,8 @@ import '../styles/GeneratedImage.css';
 const GeneratedImage = () => {
   const location = useLocation(); // 이전 페이지에서 전달된 데이터 가져오기
   const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate
+  const { generatedImage, seed } = location.state || {}; // AIImageGeneration에서 전달된 데이터 가져오기
   const [explanation, setExplanation] = useState(''); // 설명 데이터 상태
-  const [generatedImage, setGeneratedImage] = useState(null); // 생성된 이미지 상태
   const [error, setError] = useState(null); // 에러 상태
 
   // Kakao SDK 초기화 확인
@@ -18,59 +18,34 @@ const GeneratedImage = () => {
     }
   }, []);
 
-  // 설명 및 생성된 이미지 데이터를 가져오는 함수
+  // 설명 데이터 가져오기
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchExplanation = async () => {
       try {
-        // 1. 설명 데이터 가져오기
-        const descriptionResponse = await fetch('${process.env.REACT_APP_BACKEND_URL}/api/get-description');
+        const descriptionResponse = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/get-description`
+        );
         if (!descriptionResponse.ok) {
-          throw new Error(`Error ${descriptionResponse.status}: 설명 데이터를 가져올 수 없습니다.`);
+          throw new Error(
+            `Error ${descriptionResponse.status}: 설명 데이터를 가져올 수 없습니다.`
+          );
         }
         const descriptionData = await descriptionResponse.json();
         if (descriptionData.status === 'success') {
           setExplanation(descriptionData.explanation);
         } else {
-          throw new Error(descriptionData.message || '설명 데이터를 가져오는 중 문제가 발생했습니다.');
-        }
-
-        // 2. 이미지 데이터 가져오기
-        const imageResponse = await fetch('${process.env.REACT_APP_BACKEND_URL}/api/images/generate', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            image_prompt: location.state?.prompt || '기본 프롬프트',
-          }),
-        });
-
-        if (imageResponse.status === 503) {
-          const imageData = await imageResponse.json();
           throw new Error(
-            `현재 서버가 바쁩니다. 예상 대기 시간: ${imageData.estimated_time}초`
+            descriptionData.message ||
+              '설명 데이터를 가져오는 중 문제가 발생했습니다.'
           );
-        }
-
-        if (!imageResponse.ok) {
-          throw new Error(
-            `Error ${imageResponse.status}: 이미지를 가져오는 중 문제가 발생했습니다.`
-          );
-        }
-
-        const imageData = await imageResponse.json();
-        if (imageData.status === 'success') {
-          setGeneratedImage(`data:image/png;base64,${imageData.generated_image}`);
-        } else {
-          throw new Error(imageData.error || '이미지 데이터를 가져오는 중 문제가 발생했습니다.');
         }
       } catch (err) {
         setError(err.message);
       }
     };
 
-    fetchData();
-  }, [location.state?.prompt]);
+    fetchExplanation();
+  }, []);
 
   // 이미지 수정 페이지로 이동하는 함수
   const handleModificationClick = () => {
@@ -131,27 +106,35 @@ const GeneratedImage = () => {
         <div className="generated-image-container">
           <div className="left-section">
             <div className="image-box">
-              <img src={generatedImage} alt="Generated Result" className="generated-image" />
+              <img
+                src={generatedImage}
+                alt="Generated Result"
+                className="generated-image"
+              />
               <p className="image-title">이미지 생성 결과</p>
             </div>
           </div>
           <div className="right-section">
             <div className="description-box">
-              <p className="image-description">{explanation}</p> {/* 설명 출력 */}
+              <p className="image-description">{explanation}</p>
             </div>
             <div className="action-box">
               <p
                 className="image-modification-text"
-                onClick={handleModificationClick} // 클릭 시 수정 페이지로 이동
+                onClick={handleModificationClick}
                 style={{ cursor: 'pointer', textDecoration: 'underline' }}
               >
                 이미지를 수정하고 싶으신가요?
               </p>
               <button
                 className="kakao-share-button"
-                onClick={shareToKakao} // Kakao 공유 함수 연결
+                onClick={shareToKakao}
               >
-                <img src="/img/kakao.png" alt="Kakao Icon" className="kakao-icon" />
+                <img
+                  src="/img/kakao.png"
+                  alt="Kakao Icon"
+                  className="kakao-icon"
+                />
                 카카오톡 공유하기
               </button>
             </div>

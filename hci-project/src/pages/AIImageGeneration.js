@@ -9,17 +9,16 @@ const AIImageGeneration = () => {
   useEffect(() => {
     const fetchGeneratedImage = async () => {
       try {
-        const response = await fetch('${process.env.REACT_APP_BACKEND_URL}/api/images/generate', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            prompt: 'A serene and peaceful landscape with soft colors and gentle light.',
-          }),
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/images/generate`, {
+          method: 'GET', // GET 방식으로 변경
         });
 
         if (!response.ok) {
+          if (response.status === 503) {
+            const data = await response.json();
+            alert(`현재 서버가 바쁩니다. 예상 대기 시간: ${data.estimated_time}초`);
+            return;
+          }
           throw new Error(`Error: ${response.status}, ${response.statusText}`);
         }
 
@@ -27,9 +26,12 @@ const AIImageGeneration = () => {
 
         if (data.status === 'success') {
           const generatedImage = `data:image/png;base64,${data.generated_image}`; // Base64 이미지
-          navigate('/GeneratedImage', { state: { generatedImage } }); // GeneratedImage로 이동하며 이미지 데이터 전달
+          const seed = data.seed; // Seed 값
+          navigate('/GeneratedImage', {
+            state: { generatedImage, seed }, // 응답 데이터 전달
+          });
         } else {
-          throw new Error('이미지 생성에 실패했습니다.');
+          throw new Error(data.error || '이미지 생성에 실패했습니다.');
         }
       } catch (error) {
         console.error('이미지 생성 중 오류:', error.message);
