@@ -1,8 +1,7 @@
 from flask import Flask, request, jsonify, Blueprint
 from stable_diffusion import request_image_generation, API_KEY , seed, request_image_modifying
 API_KEY= API_KEY
-
-
+from brainwaves import image_prompt
 images_bp = Blueprint('images',__name__)
 import requests
 import base64
