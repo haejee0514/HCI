@@ -3,6 +3,7 @@ import os
 import sys
 from flask import Flask, request, jsonify, Blueprint
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import requests
 
 # OpenAI API 키 설정
 from config import OPENAI_KEY
@@ -96,6 +97,7 @@ def process_brainwave_data(input_data):
             }
 
         success = "started"  # 성공적으로 데이터 처리 완료
+
         return {
             "status": "success",
             "explanation": explanation_result,
