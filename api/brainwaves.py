@@ -5,7 +5,7 @@ from flask import Flask, request, jsonify, Blueprint
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import requests
 
-from stable_diffusion import request_image_generation, API_KEY , seed, request_image_modifying
+from stable_diffusion import request_image_generation, API_KEY, request_image_modifying
 
 # OpenAI API 키 설정
 from config import OPENAI_KEY
@@ -227,7 +227,6 @@ API_KEY= API_KEY
 import requests
 
 base_image=None
-seed=None
 
 import base64
 # 기존 이미지 생성 엔드포인트
@@ -291,7 +290,6 @@ def add_prompt():
 @brainwaves_bp.route('/api/images/regenerate', methods= ['GET'])
 
 def modify_image():
-    global seed
     global base_image
     global additional_prompt
     # 이미지를 수정하는 요청을 보냄
