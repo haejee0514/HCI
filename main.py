@@ -89,6 +89,8 @@ def clean_and_send_data():
         for key, value in data.items():
             if isinstance(value, float) and (math.isnan(value) or math.isinf(value)):
                 data[key] = 0.0  # NaN 값을 0으로 대체
+            elif isinstance(value, float):  # 소수점 한 자리로 제한
+                data[key] = round(value, 1)
         return data
 
     # JSON 데이터 읽기 및 NaN 값 처리
@@ -112,10 +114,10 @@ def clean_and_send_data():
         try:
             response = requests.post(url, json=entry, headers=headers)
             if response.status_code == 200:
-                print("Successfully sent data to backend")
+                print("백엔드로 데이터 전송 성공!")
             else:
-                print(f"Failed to send data. Status code: {response.status_code}")
-                print(f"Response message: {response.text}")
+                print(f"전송 실패. 응답 코드: {response.status_code}")
+                print(f"응답 메시지: {response.text}")
         except Exception as e:
             print(f"데이터 전송 중 오류 발생: {e}")
 
