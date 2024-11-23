@@ -1,27 +1,98 @@
-import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom'; // useLocation, useNavigate import
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // useNavigate import
 import Header from './Header';
 import '../styles/RegeneratedImage.css'; // 새로운 CSS 파일
 
 const RegeneratedImage = () => {
-  const location = useLocation(); // 이전 페이지에서 전달된 데이터 가져오기
+  const [modifiedImage, setModifiedImage] = useState('');
+  const [explanation, setExplanation] = useState('설명을 불러오는 중입니다...');
+  const [error, setError] = useState(null);
   const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate
 
-  // 상태 데이터
-  const modifiedImage = location.state?.modifiedImage || ''; // 전달된 수정된 이미지
-  const explanation = location.state?.explanation || '설명이 제공되지 않았습니다.'; // 설명 데이터
+  // 수정된 이미지를 API에서 가져오는 함수
+  const fetchModifiedImage = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/images/regenerate`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP Error: ${response.status}, ${response.statusText}`);
+      }
+  
+      const data = await response.json();
+  
+      // modified_image가 존재하는지 확인
+      if (data.modified_image) {
+        setModifiedImage(`data:image/png;base64,${data.modified_image}`);
+      } else {
+        throw new Error('API 응답에 modified_image 속성이 없습니다.');
+      }
+    } catch (err) {
+      setError(`이미지를 가져오는 중 오류 발생: ${err.message}`);
+      console.error('Error details:', err);
+    }
+  };
+  
+
+  // 설명 데이터를 API에서 가져오는 함수
+  const fetchExplanation = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/get-description`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          setExplanation('설명 데이터가 존재하지 않습니다.');
+        } else {
+          throw new Error(`HTTP Error: ${response.status}, ${response.statusText}`);
+        }
+      } else {
+        const data = await response.json();
+        if (data.status === 'success') {
+          setExplanation(data.explanation);
+        } else {
+          setExplanation('설명을 불러오는 중 오류가 발생했습니다.');
+        }
+      }
+    } catch (err) {
+      setError(`설명을 가져오는 중 오류 발생: ${err.message}`);
+    }
+  };
+
+  // 컴포넌트 로드 시 API 호출
+  useEffect(() => {
+    fetchModifiedImage();
+    fetchExplanation();
+  }, []);
+
+  if (error) {
+    return (
+      <div>
+        <Header />
+        <div className="error-container">
+          <p className="error-message">{error}</p>
+          <button onClick={() => navigate('/ImageModification')} className="retry-button">
+            수정 화면으로 돌아가기
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (!modifiedImage) {
     return (
       <div>
         <Header />
-        <div className="error-container">
-          <p className="error-message">
-            수정된 이미지를 불러오는 데 실패했습니다. 다시 시도해주세요.
-          </p>
-          <button onClick={() => navigate('/ImageModification')} className="retry-button">
-            수정 화면으로 돌아가기
-          </button>
+        <div className="loading-container">
+          <p>이미지를 불러오는 중입니다...</p>
         </div>
       </div>
     );
@@ -52,7 +123,7 @@ const RegeneratedImage = () => {
         ],
       });
     } else {
-      alert('카카오톡 공유를 사용할 수 없습니다. 관리자에게 문의하세요.');
+      console.error('카카오톡 공유를 사용할 수 없습니다. 관리자에게 문의하세요.');
     }
   };
 
@@ -69,12 +140,12 @@ const RegeneratedImage = () => {
           </div>
           <div className="right-section">
             <div className="description-box">
-              <p className="image-description">{explanation}</p> {/* 기존 설명 출력 */}
+              <p className="image-description">{explanation}</p>
             </div>
             <div className="action-box">
               <p
                 className="image-modification-text"
-                onClick={() => navigate('/ImageModification')} // 다시 수정 페이지로 이동
+                onClick={() => navigate('/ImageModification')}
                 style={{ cursor: 'pointer', textDecoration: 'underline' }}
               >
                 이미지를 수정하고 싶으신가요?

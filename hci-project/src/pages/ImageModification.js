@@ -44,13 +44,13 @@ const ImageModification = () => {
   // 수정 사항 전송 함수
   const handleSendClick = async () => {
     if (!text.trim()) {
-      alert('수정 사항을 입력해주세요.');
+      console.error('수정 사항을 입력해주세요.');
       return;
     }
-
+  
     setIsLoading(true);
     setError(null);
-
+  
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/images/modified`, {
         method: 'POST',
@@ -61,33 +61,36 @@ const ImageModification = () => {
           inputs: text, // 수정 사항 전달
         }),
       });
-
-      if (response.status === 503) {
-        // 서버가 바쁜 경우 처리
-        const data = await response.json();
-        if (data.status === 'loading') {
-          setEstimatedTime(data.estimated_time);
-          throw new Error(`현재 서버가 바쁩니다. 예상 대기 시간: ${data.estimated_time}초`);
-        }
-      }
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}, ${response.statusText}`);
-      }
-
+  
       const data = await response.json();
+  
+      if (!response.ok) {
+        console.error(`HTTP Error: ${response.status}, ${response.statusText}`);
+        throw new Error(data.message || `HTTP Error: ${response.status}`);
+      }
+  
       if (data.status === 'success') {
-        // 성공적으로 전송된 경우 ImageRegeneration로 이동
-        navigate('/ImageRegeneration', { state: { modifiedImage: data.modified_image, seed: data.seed } });
+        // 성공 메시지를 콘솔에 출력
+        console.log('서버로부터 응답을 성공적으로 받았습니다.');
+        console.log(`전송된 inputs: "${text}"`);
+        console.log(`서버 응답 메시지: "${data.message}"`);
+        console.log(`추가 프롬프트: "${data.data.additional_prompt}"`);
+  
+        // 이후 ImageRegeneration로 이동
+        navigate('/ImageRegeneration', { state: { modifiedImage: data.data.additional_prompt } });
       } else {
+        console.error('수정 요청에 실패했습니다.');
+        console.error(`서버 메시지: ${data.message}`);
         throw new Error(data.message || '수정 요청에 실패했습니다.');
       }
     } catch (error) {
-      setError(error.message);
+      console.error('오류가 발생했습니다:', error.message);
+      console.error('Error Details:', error); // 개발용 상세 에러 로깅
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <div>
