@@ -5,6 +5,8 @@ from flask import Flask, request, jsonify, Blueprint
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import requests
 
+from stable_diffusion import request_image_generation, API_KEY , seed, request_image_modifying
+
 # OpenAI API 키 설정
 from config import OPENAI_KEY
 openai.api_key = OPENAI_KEY
@@ -22,7 +24,16 @@ def generate_explanation(prompt):
         response = openai.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "system", "content": (
+                    "뇌파에 관한 과학적 배경 정보를 바탕으로 사용자의 상태를 한국어로 설명하고, 어떤 식으로 visualize 할 건지 방향성 제시"
+                    "문장은 100 토큰 안에 무조건 끝내도록 해."
+                    "각 뇌파는 특정한 상태를 나타낸다:\n"
+                    "- Delta (0.5-4Hz): 깊은 수면 상태.\n"
+                    "- Theta (4-8Hz): 가벼운 수면, 명상, 깊은 이완.\n"
+                    "- Alpha (8-13Hz): 이완, 각성 상태, 스트레스 감소.\n"
+                    "- Beta (13-30Hz): 집중력, 논리적 사고, 스트레스 상태.\n"
+                    "- Gamma (30-100Hz): 고도의 집중, 문제 해결, 학습.\n"
+                )},
                 {"role": "user", "content": prompt}
             ],
             max_tokens=150
@@ -42,16 +53,16 @@ def generate_image_prompt(explanation):
     try:
         prompt = (
             f"Based on the following explanation of brainwave frequencies: {explanation}, "
-            f"generate a prompt to visualize this state as an image."
+            f"generate a prompt to visualize this state as an image. End the sentence in 30 tokens."
         )
 
         response = openai.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "You are an AI artist supporter. Provide an idea for drawing."},
+                {"role": "system", "content": "You are an AI artist supporter. Provide an concrete idea for drawing."},
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=70
+            max_tokens=30
         )
 
         image_prompt = response.choices[0].message.content.strip()
@@ -72,7 +83,7 @@ def process_brainwave_data(input_data):
             f"My measured brainwaves are as follows: Delta {input_data['Delta']} Hz, "
             f"Theta {input_data['Theta']} Hz, Alpha {input_data['Alpha']} Hz, "
             f"Beta {input_data['Beta']} Hz, Gamma {input_data['Gamma']} Hz.\n"
-            "Based on this result, describe the brainwave state in a way that can be visualized as an image."
+            "이 뇌파로 사용자의 상태를 설명하고, 어떤 식으로 그림을 만들 수 있는지 설명해."
         )
 
         # Explanation 생성
@@ -206,3 +217,83 @@ def get_description():
             "status": "error",
             "message": "Internal server error occurred."
         }), 500
+    
+
+
+
+
+API_KEY= API_KEY
+
+import requests
+
+base_image=None
+seed=None
+
+import base64
+# 기존 이미지 생성 엔드포인트
+@brainwaves_bp.route('/api/images/generate', methods=['GET'])
+def generate_image():
+    global base_image
+    global image_prompt
+    print(image_prompt)
+    
+    # 이미지 생성 요청
+    response = request_image_generation(image_prompt)
+
+    if response.get("status") == "success":
+        base_image = response.get("generated_image")
+        
+        # Base64 문자열을 JSON 응답으로 반환
+        return jsonify({
+            "status": "success",
+            "generated_image": base_image  # Base64 문자열 그대로 반환
+        }), 200
+    else:
+        # 실패한 경우 적절한 오류 응답 반환
+        return jsonify(response), 400
+
+
+
+additional_prompt=None
+
+# 이미지 수정(Inpainting) 엔드포인트
+@brainwaves_bp.route('/api/images/modified', methods=['POST'])
+def add_prompt():
+    global additional_prompt
+    try:
+        # 요청 데이터 받기
+        data = request.json
+        if not data or "inputs" not in data:
+            return jsonify({"error": "Invalid input, 'inputs' is required"}), 400
+
+        # 'inputs' 값 처리
+        additional_prompt = data.get("inputs")
+        
+        # 성공 응답
+        response = {
+            "status": "success",
+            "message": "Image modification request received successfully",
+            "data": {"additional_prompt": additional_prompt}
+        }
+        print("Response data:", response)
+        return jsonify(response), 200
+
+    except Exception as e:
+        # 에러 처리
+        error_response = {
+            "status": "error",
+            "message": f"An error occurred: {str(e)}"
+        }
+        print("error data:", error_response)
+        return jsonify(error_response), 500
+    
+    
+@brainwaves_bp.route('/api/images/regenerate', methods= ['GET'])
+
+def modify_image():
+    global seed
+    global base_image
+    global additional_prompt
+    # 이미지를 수정하는 요청을 보냄
+    response = request_image_modifying(base_image, additional_prompt)
+    return jsonify(response)
