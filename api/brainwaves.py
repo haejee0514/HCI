@@ -16,10 +16,15 @@ brainwaves_bp = Blueprint('brainwaves',__name__)
 success=None
 explanation=None
 image_prompt=None
+seed=None
+import random
+
 
 # 첫 번째 API 호출: Explanation 생성
 def generate_explanation(prompt):
     global success
+    global seed
+    seed = random.randint(1, 100000)
     try:
         response = openai.chat.completions.create(
             model="gpt-3.5-turbo",
@@ -212,6 +217,25 @@ def get_description():
     
 
 
+#    주어진 이미지 재생성 프롬프트를 OpenAI를 사용하여 영어로 번역하는 함수.
+def translate_prompt_to_english(prompt):
+    try:
+        response = openai.chat.completions.create(
+            model="gpt-3.5-turbo",  # GPT-3.5 Turbo 모델을 사용
+            messages=[
+                {"role": "system", "content": "Translate the following text to English:"},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=100
+        )
+        translated_prompt = response.choices[0].message.content.strip()
+        print(f"Translated Prompt: {translated_prompt}")  # 번역된 프롬프트 출력
+        return translated_prompt
+    except Exception as e:
+        print(f"Error in translation: {e}")  # 번역 중 발생한 오류 출력
+        return None
+
+
 
 
 API_KEY= API_KEY
@@ -226,10 +250,11 @@ import base64
 def generate_image():
     global base_image
     global image_prompt
-    print(image_prompt)
+    global seed
+    print(image_prompt, seed)
     
     # 이미지 생성 요청
-    response = request_image_generation(image_prompt)
+    response = request_image_generation(image_prompt,seed)
 
     if response.get("status") == "success":
         base_image = response.get("generated_image")
@@ -284,6 +309,9 @@ def add_prompt():
 def modify_image():
     global base_image
     global additional_prompt
+    global seed
+    print(seed)
+    translated_prompt = translate_prompt_to_english(additional_prompt)
     # 이미지를 수정하는 요청을 보냄
-    response = request_image_modifying(base_image, additional_prompt)
+    response = request_image_modifying(base_image, translated_prompt,seed)
     return jsonify(response)

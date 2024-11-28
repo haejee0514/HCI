@@ -15,13 +15,14 @@ STABLE_DIFFUSION_API_URL = "https://api-inference.huggingface.co/models/stabilit
 API_KEY = API_KEY
 
 
-def request_image_generation(prompt):
+def request_image_generation(prompt,seed):
     headers = {
         "Authorization": f"Bearer {API_KEY}"
     }
     
     payload = {
-        "inputs": prompt
+        "inputs": prompt,
+        "seed": seed
     }
     
     # 이미지 생성 API 요청
@@ -50,7 +51,7 @@ def request_image_generation(prompt):
 import base64
 import requests
 
-def request_image_modifying(init_image, prompt, init_strength=0.1, steps=20, cfg_scale=5.0):
+def request_image_modifying(init_image, prompt, seed, init_strength=0.1, steps=20, cfg_scale=1.0):
     headers = {
         "Authorization": f"Bearer {API_KEY}",
         "Content-Type": "application/json"
@@ -61,11 +62,9 @@ def request_image_modifying(init_image, prompt, init_strength=0.1, steps=20, cfg
         "init_image": init_image,  # 이미 Base64로 인코딩된 기존 이미지
         "strength": init_strength,  # 기존 이미지 수정 강도 (0~1)
         "num_inference_steps": steps,  # 생성 단계 수
-        "guidance_scale": cfg_scale  # 텍스트 반응 강도
+        "guidance_scale": cfg_scale,  # 텍스트 반응 강도
+        "seed": seed  # Seed 값을 추가
     }
-
-    
-    print(payload)
 
     # 이미지 생성 API 요청
     response = requests.post(STABLE_DIFFUSION_API_URL, headers=headers, json=payload)
