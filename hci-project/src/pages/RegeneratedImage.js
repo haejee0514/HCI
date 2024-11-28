@@ -36,7 +36,6 @@ const RegeneratedImage = () => {
       console.error('Error details:', err);
     }
   };
-  
 
   // 설명 데이터를 API에서 가져오는 함수
   const fetchExplanation = async () => {
@@ -105,22 +104,9 @@ const RegeneratedImage = () => {
         objectType: 'feed',
         content: {
           title: 'AI가 생성한 이미지',
-          description: explanation,
+          description: explanation, // 설명 데이터
           imageUrl: modifiedImage, // 이미지 URL
-          link: {
-            webUrl: 'https://your-website.com', // 공유할 링크
-            mobileWebUrl: 'https://your-website.com',
-          },
         },
-        buttons: [
-          {
-            title: '자세히 보기',
-            link: {
-              webUrl: 'https://your-website.com',
-              mobileWebUrl: 'https://your-website.com',
-            },
-          },
-        ],
       });
     } else {
       console.error('카카오톡 공유를 사용할 수 없습니다. 관리자에게 문의하세요.');

@@ -6,7 +6,7 @@ import '../styles/GeneratedImage.css';
 const GeneratedImage = () => {
   const location = useLocation(); // 이전 페이지에서 전달된 데이터 가져오기
   const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate
-  const { generatedImage, seed } = location.state || {}; // AIImageGeneration에서 전달된 데이터 가져오기
+  const { generatedImage } = location.state || {}; // AIImageGeneration에서 전달된 데이터 가져오기
   const [explanation, setExplanation] = useState(''); // 설명 데이터 상태
   const [error, setError] = useState(null); // 에러 상태
 
@@ -61,20 +61,7 @@ const GeneratedImage = () => {
           title: 'AI 이미지 생성 결과',
           description: explanation, // 설명 데이터
           imageUrl: generatedImage, // 생성된 이미지
-          link: {
-            webUrl: 'http://localhost:3000', // 공유 시 클릭하면 이동할 URL
-            mobileWebUrl: 'http://localhost:3000',
-          },
         },
-        buttons: [
-          {
-            title: '결과 보기',
-            link: {
-              webUrl: 'http://localhost:3000',
-              mobileWebUrl: 'http://localhost:3000',
-            },
-          },
-        ],
       });
     } else {
       alert('Kakao SDK가 초기화되지 않았습니다.');
