@@ -24,19 +24,12 @@ def generate_explanation(prompt):
         response = openai.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": (
-                    "뇌파에 관한 과학적 배경 정보를 바탕으로 사용자의 상태를 한국어로 설명하고, 어떤 식으로 visualize 할 건지 방향성 제시"
-                    "문장은 100 토큰 안에 무조건 끝내도록 해."
-                    "각 뇌파는 특정한 상태를 나타낸다:\n"
-                    "- Delta (0.5-4Hz): 깊은 수면 상태.\n"
-                    "- Theta (4-8Hz): 가벼운 수면, 명상, 깊은 이완.\n"
-                    "- Alpha (8-13Hz): 이완, 각성 상태, 스트레스 감소.\n"
-                    "- Beta (13-30Hz): 집중력, 논리적 사고, 스트레스 상태.\n"
-                    "- Gamma (30-100Hz): 고도의 집중, 문제 해결, 학습.\n"
-                )},
+                {
+                "role": "system",
+                "content": "각 뇌파 상태는 다양한 감정, 상황, 그리고 환경적 변화를 반영할 수 있습니다. 아래 뇌파 상태에 대해 사용자의 상태를 설명하고, 그 상태에 맞는 시각적 표현 방법을 아이디어만 간단하게 하나만 제시해 주세요. 다음 예시는 그냥 아이디어일 뿐이니 무시해도 됩니다. 색상, 구성, 감정적인 요소를 다양하게 고려하지만, 자세하면 안됩니다. Delta: 어두운 환경, 흐릿한 빛, 혹은 잠자는 사람의 모습을 나타낼 수 있습니다. 이 외에도 꿈 속의 환상적인 풍경, 혹은 평화롭고 고요한 자연 환경 등 다양한 방식으로 표현할 수 있습니다. 또한, 공간이 넓고 어두운 이미지나, 잠에 빠져드는 순간의 감각을 시각적으로 담을 수 있습니다. Theta: 명상, 깊은 이완  명상 상태나 깊은 이완을 상징하는 다양한 시각적 표현을 고려해 주세요. 예를 들어, 잔잔한 자연 풍경, 산속의 명상하는 사람, 혹은 공기처럼 흐르는 추상적인 형태들이 떠오를 수 있습니다. 부드러운 색조와 차분한 분위기 외에도, 더 환상적이거나 꿈같은 이미지를 상상해볼 수 있습니다. 색감은 차분하고 은은한 느낌으로, 상상력을 자극하는 풍경을 그릴 수 있습니다. Alpha: 이완, 각성 상태, 스트레스 감소. 편안하고 차분한 상태를 나타내는 다양한 이미지들. 부드러운 자연 장면, 혹은 공허함을 느낄 수 있는 넓은 공간, 가벼운 구름과 함께 느긋한 분위기를 연출할 수 있습니다. 이 외에도 스트레스를 해소하는 활동을 묘사하는 것도 가능합니다. 예를 들어, 따뜻한 햇살 속에서 이완되는 사람의 모습, 바다와 하늘이 맞닿은 넓은 공간 등을 고려할 수 있습니다. Beta: 집중력과 스트레스가 동시에 발현되는 상태로, 복잡하고 치열한 환경, 또는 격렬한 운동이나 논리적인 문제를 푸는 모습 등을 시각적으로 표현할 수 있습니다. 강렬한 색상, 격자무늬, 빠르게 움직이는 사람의 모습 등도 다양하게 그릴 수 있습니다. 또한, 차가운 색조와 복잡한 기하학적 패턴을 사용하여 집중적인 에너지를 표현할 수 있습니다. Gamma: 매우 높은 집중 상태로, 에너지 넘치는 장면이나 머릿속에서 여러 가지 아이디어가 떠오르는 순간을 그릴 수 있습니다. 매우 다양한 색상과 형상, 빠르게 변화하는 이미지를 고려해 보세요. 무언가를 해결하려는 행동이나 창의적인 아이디어가 현실로 나타나는 장면 등도 가능성이 있습니다. 빛이 반짝이는 순간, 여러 가지 요소들이 빠르게 떠오르는 모습 등을 시각화할 수 있습니다."
+                },
                 {"role": "user", "content": prompt}
-            ],
-            max_tokens=150
+            ]
         )
         explanation = response.choices[0].message.content.strip()
         return explanation
@@ -59,10 +52,9 @@ def generate_image_prompt(explanation):
         response = openai.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "You are an AI artist supporter. Provide an concrete idea for drawing."},
+                {"role": "system", "content": "You are an AI artist supporter. Provide an concrete idea for drawing in 2 sentences"},
                 {"role": "user", "content": prompt}
-            ],
-            max_tokens=30
+            ]
         )
 
         image_prompt = response.choices[0].message.content.strip()
@@ -83,7 +75,7 @@ def process_brainwave_data(input_data):
             f"My measured brainwaves are as follows: Delta {input_data['Delta']} Hz, "
             f"Theta {input_data['Theta']} Hz, Alpha {input_data['Alpha']} Hz, "
             f"Beta {input_data['Beta']} Hz, Gamma {input_data['Gamma']} Hz.\n"
-            "이 뇌파로 사용자의 상태를 설명하고, 어떤 식으로 그림을 만들 수 있는지 설명해."
+            "Explain user's condition with this brainwave, and explain how you can make a picture in korean and it should be short."
         )
 
         # Explanation 생성
