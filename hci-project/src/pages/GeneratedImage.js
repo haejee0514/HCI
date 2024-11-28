@@ -47,6 +47,20 @@ const GeneratedImage = () => {
     fetchExplanation();
   }, []);
 
+  // Base64 이미지를 Blob URL로 변환
+  const convertBase64ToBlobUrl = (base64Image) => {
+    const byteString = atob(base64Image.split(',')[1]);
+    const mimeString = base64Image.split(',')[0].split(':')[1].split(';')[0];
+
+    const arrayBuffer = new Uint8Array(byteString.length);
+    for (let i = 0; i < byteString.length; i++) {
+      arrayBuffer[i] = byteString.charCodeAt(i);
+    }
+
+    const blob = new Blob([arrayBuffer], { type: mimeString });
+    return URL.createObjectURL(blob); // Blob URL 반환
+  };
+
   // 이미지 수정 페이지로 이동하는 함수
   const handleModificationClick = () => {
     navigate('/ImageModification');
@@ -55,14 +69,42 @@ const GeneratedImage = () => {
   // 카카오톡 공유하기 함수
   const shareToKakao = () => {
     if (window.Kakao) {
-      window.Kakao.Share.sendDefault({
-        objectType: 'feed',
-        content: {
-          title: 'AI 이미지 생성 결과',
-          description: explanation, // 설명 데이터
-          imageUrl: generatedImage, // 생성된 이미지
-        },
-      });
+      try {
+        if (!generatedImage.startsWith('data:image')) {
+          console.error('유효하지 않은 이미지 URL입니다:', generatedImage);
+          alert('유효하지 않은 이미지 URL입니다.');
+          return;
+        }
+
+        // Base64 이미지를 Blob URL로 변환
+        const blobUrl = convertBase64ToBlobUrl(generatedImage);
+
+        // 카카오톡 공유 API 호출
+        window.Kakao.Share.sendDefault({
+          objectType: 'feed',
+          content: {
+            title: 'AI 이미지 생성 결과',
+            description: explanation, // 설명 데이터
+            imageUrl: blobUrl, // Blob URL 사용
+            link: {
+              mobileWebUrl: 'http://localhost:3000',
+              webUrl: 'http://localhost:3000',
+            },
+          },
+          buttons: [
+            {
+              title: '결과 보기',
+              link: {
+                mobileWebUrl: 'http://localhost:3000',
+                webUrl: 'http://localhost:3000',
+              },
+            },
+          ],
+        });
+      } catch (error) {
+        console.error('Kakao 공유하기 중 오류:', error);
+        alert('Kakao 공유하기 중 문제가 발생했습니다. 다시 시도해주세요.');
+      }
     } else {
       alert('Kakao SDK가 초기화되지 않았습니다.');
     }

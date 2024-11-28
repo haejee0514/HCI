@@ -66,6 +66,20 @@ const RegeneratedImage = () => {
     }
   };
 
+  // Base64 이미지를 Blob URL로 변환
+  const convertBase64ToBlobUrl = (base64Image) => {
+    const byteString = atob(base64Image.split(',')[1]);
+    const mimeString = base64Image.split(',')[0].split(':')[1].split(';')[0];
+
+    const arrayBuffer = new Uint8Array(byteString.length);
+    for (let i = 0; i < byteString.length; i++) {
+      arrayBuffer[i] = byteString.charCodeAt(i);
+    }
+
+    const blob = new Blob([arrayBuffer], { type: mimeString });
+    return URL.createObjectURL(blob); // Blob URL 반환
+  };
+
   // 컴포넌트 로드 시 API 호출
   useEffect(() => {
     fetchModifiedImage();
@@ -100,16 +114,38 @@ const RegeneratedImage = () => {
   // 카카오톡 공유 함수
   const shareToKakao = () => {
     if (window.Kakao) {
-      window.Kakao.Share.sendDefault({
-        objectType: 'feed',
-        content: {
-          title: 'AI가 생성한 이미지',
-          description: explanation, // 설명 데이터
-          imageUrl: modifiedImage, // 이미지 URL
-        },
-      });
+      try {
+        // Base64 이미지를 Blob URL로 변환
+        const blobUrl = convertBase64ToBlobUrl(modifiedImage);
+
+        // 카카오톡 공유 API 호출
+        window.Kakao.Share.sendDefault({
+          objectType: 'feed',
+          content: {
+            title: 'AI가 생성한 이미지',
+            description: explanation, // 설명 데이터
+            imageUrl: blobUrl, // Blob URL 사용
+            link: { // 필수 link 키 추가
+              mobileWebUrl: 'http://localhost:3000', // 실제 배포 URL로 변경 필요
+              webUrl: 'http://localhost:3000', // 실제 배포 URL로 변경 필요
+            },
+          },
+          buttons: [
+            {
+              title: '이미지 확인하기',
+              link: { // 버튼 링크 추가
+                mobileWebUrl: 'http://localhost:3000',
+                webUrl: 'http://localhost:3000',
+              },
+            },
+          ],
+        });
+      } catch (error) {
+        console.error('카카오톡 공유 중 오류 발생:', error);
+        alert('카카오톡 공유 중 오류가 발생했습니다. 다시 시도해주세요.');
+      }
     } else {
-      console.error('카카오톡 공유를 사용할 수 없습니다. 관리자에게 문의하세요.');
+      alert('Kakao SDK가 초기화되지 않았습니다.');
     }
   };
 
