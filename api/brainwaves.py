@@ -238,6 +238,33 @@ def translate_prompt_to_english(prompt):
 
 
 
+def combine_prompts_with_openai(image_prompt, translated_prompt):
+    try:
+        # OpenAI API를 사용하여 두 텍스트를 자연스럽게 결합하도록 요청
+        response = openai.chat.completions.create(
+            model="gpt-3.5-turbo",  # GPT-3.5 Turbo 모델을 사용
+            messages=[
+                {"role": "system", "content": "You are an AI assistant that combines descriptions to create a more complete and coherent prompt."},
+                {
+                    "role": "user",
+                    "content": f"Use the following description as a base for the image: {image_prompt}. Now, apply the following modification to the image: {translated_prompt}. Provide a detailed and coherent description combining both, ensuring the original vision is preserved while applying the change in 3 sentences"
+                }
+            ],
+        )
+
+        # 모델의 응답에서 결합된 텍스트 추출
+        combined_prompt = response.choices[0].message.content.strip()
+        print(f"Combined Prompt: {combined_prompt}")  # 결합된 프롬프트 출력
+
+        return combined_prompt
+
+    except Exception as e:
+        print(f"Error in combining prompts: {e}")  # 오류 발생 시 출력
+        return None
+
+
+
+
 API_KEY= API_KEY
 
 import requests
@@ -310,8 +337,10 @@ def modify_image():
     global base_image
     global additional_prompt
     global seed
+    global image_prompt
     print(seed)
     translated_prompt = translate_prompt_to_english(additional_prompt)
     # 이미지를 수정하는 요청을 보냄
-    response = request_image_modifying(base_image, translated_prompt,seed)
+    combined_prompt=combine_prompts_with_openai(image_prompt,translated_prompt)
+    response = request_image_modifying(base_image, combined_prompt ,seed)
     return jsonify(response)
