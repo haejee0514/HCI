@@ -15,6 +15,28 @@ STABLE_DIFFUSION_API_URL = "https://api-inference.huggingface.co/models/stabilit
 API_KEY = API_KEY
 
 
+
+# 첫 번째 요청을 보내어 모델 로딩
+def pre_load_model():
+    headers = {
+        "Authorization": f"Bearer {API_KEY}"
+    }
+    
+    data = {
+        "inputs": "A simple test to load the model",
+    }
+
+    # 첫 번째 요청 보내기 (모델 로딩 효과)
+    response = requests.post(STABLE_DIFFUSION_API_URL, headers=headers, json=data)
+
+    if response.status_code == 200:
+        print("모델이 로딩되었습니다.")
+    else:
+        print(f"API 호출 실패: {response.status_code}, {response.text}")
+
+
+
+
 def request_image_generation(prompt,seed):
     headers = {
         "Authorization": f"Bearer {API_KEY}"
